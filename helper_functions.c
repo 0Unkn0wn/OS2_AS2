@@ -15,6 +15,7 @@ int random_between(int min, int max) {
 }
 
 //https://stackoverflow.com/a/23587285 for the print alternative
+//not needed anymore because the other threads do not print anything
 void safe_print(sem_t *mutex, const char *format, ...) {
     va_list args;
     va_start(args, format);

@@ -4,10 +4,10 @@
 // Program constants
 #define MAX_CUSTOMERS 10
 
-#define NUM_CARTS 10
-#define NUM_SCANNERS 5
-#define NUM_CASHIERS 2
-#define NUM_TERMINALS 1
+#define NUM_CARTS 20
+#define NUM_SCANNERS 10
+#define NUM_CASHIERS 3
+#define NUM_TERMINALS 2
 
 // Timing definitions in seconds
 

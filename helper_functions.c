@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 void sleep_seconds(const double seconds) {
-    usleep((useconds_t)(seconds * 1e6));
+    usleep((useconds_t) (seconds * 1e6));
 }
 
 int random_between(int min, int max) {

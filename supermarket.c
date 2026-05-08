@@ -30,15 +30,25 @@ static bool supermarket_running;
 static time_t simulation_started_at;
 
 static void join_terminal_queue(Customer *customer);
+
 static void join_shortest_cashier_queue(Customer *customer);
+
 static int find_shortest_cashier_queue(void);
+
 static void set_customer_state(Customer *customer, CustomerState new_state);
+
 static int elapsed_seconds(void);
+
 static const char *state_to_string(CustomerState state);
+
 static char path_char(const Customer *customer);
+
 static void print_display(void);
+
 static void print_customer_line(const Customer *customer, int now);
+
 static void print_queue_customers(const Queue *queue);
+
 static void print_dots(int count);
 
 void supermarket_init(void) {
@@ -329,11 +339,11 @@ static void set_customer_state(Customer *customer, CustomerState new_state) {
 
     if (new_state == STATE_LEFT || new_state == STATE_LEFT_NO_CART) {
         customer->total_time = customer->shopping_time
-                                + customer->waiting_time
-                                + customer->cashier_time
-                                + customer->terminal_time
-                                + customer->checking_time
-                                + customer->returning_time;
+                               + customer->waiting_time
+                               + customer->cashier_time
+                               + customer->terminal_time
+                               + customer->checking_time
+                               + customer->returning_time;
     }
 
     sem_post(&customers_mutex);
@@ -453,17 +463,18 @@ static void print_customer_line(const Customer *customer, int now) {
     }
 
     if (customer->state == STATE_LEFT) {
-        printf("C%02d [%c] | %-12s total:%3ds (shopping:%ds, waiting:%ds, cashier:%ds, terminal:%ds, checking:%ds, returning:%ds)\n",
-               customer->id,
-               path,
-               state,
-               customer->total_time,
-               customer->shopping_time,
-               customer->waiting_time,
-               customer->cashier_time,
-               customer->terminal_time,
-               customer->checking_time,
-               customer->returning_time);
+        printf(
+            "C%02d [%c] | %-12s total:%3ds (shopping:%ds, waiting:%ds, cashier:%ds, terminal:%ds, checking:%ds, returning:%ds)\n",
+            customer->id,
+            path,
+            state,
+            customer->total_time,
+            customer->shopping_time,
+            customer->waiting_time,
+            customer->cashier_time,
+            customer->terminal_time,
+            customer->checking_time,
+            customer->returning_time);
         return;
     }
 

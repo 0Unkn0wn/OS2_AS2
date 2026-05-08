@@ -145,3 +145,5 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
+### RPi build folder
+build/

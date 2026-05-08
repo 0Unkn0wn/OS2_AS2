@@ -54,6 +54,7 @@ int main(void) {
         customer->waiting_time = 0;
         customer->cashier_time = 0;
         customer->terminal_time = 0;
+        customer->checking_time = 0;
         customer->returning_time = 0;
         customer->total_time = 0;
         sem_init(&customer->done, 0, 0);
@@ -61,7 +62,8 @@ int main(void) {
         supermarket_register_customer(customer, i);
         pthread_create(&customer_threads[i], NULL, customer_thread, customer);
 
-        if (i < MAX_CUSTOMERS - 1) { // do not wait for another customer after the last one we are closing the store
+        if (i < MAX_CUSTOMERS - 1) {
+            // do not wait for another customer after the last one we are closing the store
             sleep_seconds(random_between(ARRIVAL_TIME_MIN, ARRIVAL_TIME_MAX));
         }
     }

@@ -25,6 +25,9 @@
 #define CART_CLEARING_TIME_MIN 1
 #define CART_CLEARING_TIME_MAX 2
 
+#define TERMINAL_CHECKING_TIME_MIN 5
+#define TERMINAL_CHECKING_TIME_MAX 10
+
 // catch early errors
 #if NUM_CASHIERS < 1
 #error "NUM_CASHIERS must be at least 1"

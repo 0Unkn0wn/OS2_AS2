@@ -11,6 +11,7 @@ typedef enum {
     STATE_AT_CASHIER,
     STATE_WAITING_TERMINAL,
     STATE_AT_TERMINAL,
+    STATE_CHECKING,
     STATE_RETURNING_CART,
     STATE_LEFT,
     STATE_LEFT_NO_CART
@@ -28,6 +29,7 @@ typedef struct Customer {
     int waiting_time;
     int cashier_time;
     int terminal_time;
+    int checking_time;
     int returning_time;
     int total_time;
 } Customer;

@@ -170,6 +170,12 @@ void *terminal_thread(void *arg) {
         set_customer_state(customer, STATE_AT_TERMINAL);
         sleep_seconds(TERMINAL_TIME);
 
+        if (random_between(1, 4) == 1) {
+            set_customer_state(customer, STATE_CHECKING);
+
+            sleep_seconds(random_between(TERMINAL_CHECKING_TIME_MIN, TERMINAL_CHECKING_TIME_MAX));
+        }
+
         sem_wait(&customers_mutex);
         terminal_serving[terminal_id] = NULL;
         sem_post(&customers_mutex);
@@ -302,6 +308,9 @@ static void set_customer_state(Customer *customer, CustomerState new_state) {
         case STATE_WAITING_TERMINAL:
             customer->waiting_time += duration;
             break;
+        case STATE_CHECKING:
+            customer->checking_time += duration;
+            break;
         case STATE_AT_CASHIER:
             customer->cashier_time += duration;
             break;
@@ -320,10 +329,11 @@ static void set_customer_state(Customer *customer, CustomerState new_state) {
 
     if (new_state == STATE_LEFT || new_state == STATE_LEFT_NO_CART) {
         customer->total_time = customer->shopping_time
-                               + customer->waiting_time
-                               + customer->cashier_time
-                               + customer->terminal_time
-                               + customer->returning_time;
+                                + customer->waiting_time
+                                + customer->cashier_time
+                                + customer->terminal_time
+                                + customer->checking_time
+                                + customer->returning_time;
     }
 
     sem_post(&customers_mutex);
@@ -346,6 +356,8 @@ static const char *state_to_string(CustomerState state) {
             return "cashier";
         case STATE_AT_TERMINAL:
             return "terminal";
+        case STATE_CHECKING:
+            return "checking";
         case STATE_RETURNING_CART:
             return "returning";
         case STATE_LEFT:
@@ -441,7 +453,7 @@ static void print_customer_line(const Customer *customer, int now) {
     }
 
     if (customer->state == STATE_LEFT) {
-        printf("C%02d [%c] | %-12s total:%3ds (shopping:%ds, waiting:%ds, cashier:%ds, terminal:%ds, returning:%ds)\n",
+        printf("C%02d [%c] | %-12s total:%3ds (shopping:%ds, waiting:%ds, cashier:%ds, terminal:%ds, checking:%ds, returning:%ds)\n",
                customer->id,
                path,
                state,
@@ -450,6 +462,7 @@ static void print_customer_line(const Customer *customer, int now) {
                customer->waiting_time,
                customer->cashier_time,
                customer->terminal_time,
+               customer->checking_time,
                customer->returning_time);
         return;
     }

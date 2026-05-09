@@ -86,8 +86,18 @@ void supermarket_close(void) {
     supermarket_running = false;
 
     for (int i = 0; i < NUM_CASHIERS; i++) {
+        sem_wait(&cashier_queue_mutex[i]);
+        queue_push(&cashier_queues[i], NULL);
+        sem_post(&cashier_queue_mutex[i]);
+
         sem_post(&cashier_customer_available[i]);
     }
+
+    sem_wait(&terminal_queue_mutex);
+    for (int i = 0; i < NUM_TERMINALS; i++) {
+        queue_push(&terminal_queue, NULL);
+    }
+    sem_post(&terminal_queue_mutex);
 
     for (int i = 0; i < NUM_TERMINALS; i++) {
         sem_post(&terminal_customer_available);
@@ -123,19 +133,15 @@ void supermarket_register_customer(Customer *customer, int index) {
 void *cashier_thread(void *arg) {
     int cashier_id = *(int *) arg;
 
-    while (supermarket_running) {
+    for (;;) {
         sem_wait(&cashier_customer_available[cashier_id]);
-
-        if (!supermarket_running) {
-            break;
-        }
 
         sem_wait(&cashier_queue_mutex[cashier_id]);
         Customer *customer = queue_pop(&cashier_queues[cashier_id]);
         sem_post(&cashier_queue_mutex[cashier_id]);
 
         if (customer == NULL) {
-            continue;
+            break;
         }
 
         sem_wait(&customers_mutex);
@@ -158,19 +164,15 @@ void *cashier_thread(void *arg) {
 void *terminal_thread(void *arg) {
     int terminal_id = *(int *) arg;
 
-    while (supermarket_running) {
+    for (;;) {
         sem_wait(&terminal_customer_available);
-
-        if (!supermarket_running) {
-            break;
-        }
 
         sem_wait(&terminal_queue_mutex);
         Customer *customer = queue_pop(&terminal_queue);
         sem_post(&terminal_queue_mutex);
 
         if (customer == NULL) {
-            continue;
+            break;
         }
 
         sem_wait(&customers_mutex);
@@ -182,7 +184,6 @@ void *terminal_thread(void *arg) {
 
         if (random_between(1, 4) == 1) {
             set_customer_state(customer, STATE_CHECKING);
-
             sleep_seconds(random_between(TERMINAL_CHECKING_TIME_MIN, TERMINAL_CHECKING_TIME_MAX));
         }
 
@@ -488,7 +489,10 @@ static void print_queue_customers(const Queue *queue) {
     Node *current = queue->front;
 
     while (current != NULL) {
-        printf(" C%02d", current->customer->id);
+        if (current->customer != NULL) {
+            printf(" C%02d", current->customer->id);
+        }
+
         current = current->next;
     }
 }

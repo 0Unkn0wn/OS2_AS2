@@ -147,3 +147,7 @@ CMakeUserPresets.json
 
 ### RPi build folder
 build/
+
+### all .idea files :)
+
+.idea/
